@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id             String           @id @default(uuid())
+  name           String
+  email          String           @unique
+  password       String
+  cep            String?
+  location       String?
+  createdAt      DateTime         @default(now())
+  clientFavorite ClientFavorite[]
+  sales          Sales[]
+
+  @@map("clients")
+}
+
+model Seller {
+  id             String           @id @default(uuid())
+  name           String
+  email          String           @unique
+  password       String
+  cep            String
+  profile        Bytes?
+  createdAt      DateTime         @default(now())
+  clientFavorite ClientFavorite[]
+  sales          Sales[]
+  paymentMethods PaymentMethod[]
+
+  @@map("sellers")
+}
+
+model ClientFavorite {
+  id       String @id @default(uuid())
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+  seller   Seller @relation(fields: [sellerId], references: [id])
+  sellerId String
+
+  @@index([clientId])
+  @@index([sellerId])
+  @@map("client_favorites")
+}
+
+model Sales {
+  id        String   @id @default(uuid())
+  seller    Seller   @relation(fields: [sellerId], references: [id])
+  sellerId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  clientId  String
+  value     Decimal
+  createdAt DateTime @default(now())
+
+  @@index([sellerId])
+  @@index([clientId])
+  @@map("sales")
+}
+
+model PaymentMethod {
+  id       String      @id @default(uuid())
+  type     PaymentType
+  value    Decimal
+  seller   Seller      @relation(fields: [sellerId], references: [id])
+  sellerId String
+}
+
+enum PaymentType {
+  CARD
+  CASH
+  PIX
+}
