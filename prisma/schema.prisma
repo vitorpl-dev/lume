@@ -13,12 +13,26 @@ model Client {
   email          String           @unique
   password       String
   cep            String?
-  location       String?
   createdAt      DateTime         @default(now())
   clientFavorite ClientFavorite[]
   sales          Sales[]
+  location       Location[]
 
   @@map("clients")
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  name      String   @default("Home")
+  lat       Decimal
+  long      Decimal
+  reference String?
+  createdAt DateTime @default(now())
+
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId String?
+
+  @@map("locations")
 }
 
 model Seller {
@@ -49,13 +63,14 @@ model ClientFavorite {
 }
 
 model Sales {
-  id        String   @id @default(uuid())
-  seller    Seller   @relation(fields: [sellerId], references: [id])
-  sellerId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  clientId  String
-  value     Decimal
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  seller     Seller   @relation(fields: [sellerId], references: [id])
+  sellerId   String
+  client     Client   @relation(fields: [clientId], references: [id])
+  clientId   String
+  value      Decimal
+  isComplete Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
   @@index([sellerId])
   @@index([clientId])
@@ -68,6 +83,8 @@ model PaymentMethod {
   value    Decimal
   seller   Seller      @relation(fields: [sellerId], references: [id])
   sellerId String
+
+  @@map("payment_methods")
 }
 
 enum PaymentType {
