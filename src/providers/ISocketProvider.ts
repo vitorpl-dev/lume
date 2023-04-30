@@ -14,5 +14,6 @@ export interface ISocket {
 export interface ISocketProvider {
 	onConnect(socket: ISocket): Promise<void>;
 	onDisconnect(email: string): Promise<void>;
+	authenticate(token: string): Promise<boolean>;
 	sendMessage(props: IData): Promise<void>;
 }

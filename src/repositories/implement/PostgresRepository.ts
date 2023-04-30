@@ -17,7 +17,6 @@ export class PostgresRepository implements IRepository {
 				name: client.name,
 				email: client.email,
 				password: this.createMd5(client.password),
-				location: client.location,
 				cep: client.cep,
 			},
 		});

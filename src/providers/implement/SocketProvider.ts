@@ -1,3 +1,4 @@
+import { verifyToken } from '../../auth/jwt';
 import { IData, ISocket, ISocketProvider } from '../ISocketProvider';
 
 export class SocketProvider implements ISocketProvider {
@@ -6,12 +7,22 @@ export class SocketProvider implements ISocketProvider {
 		this.sockets.push(socket);
 	}
 
-	async onDisconnect(email: string): Promise<void> {
-		const socket = this.sockets.find((socketio) => socketio.email == email);
+	async onDisconnect(id: string): Promise<void> {
+		const socket = this.sockets.find((socketio) => socketio.socket.id == id);
 
 		if (socket) {
 			this.sockets.splice(this.sockets.indexOf(socket));
 		}
+	}
+
+	async authenticate(token: string): Promise<boolean> {
+		const decoded = verifyToken(token);
+
+		if (decoded) {
+			return true;
+		}
+
+		return false;
 	}
 
 	async sendMessage(props: IData): Promise<void> {
