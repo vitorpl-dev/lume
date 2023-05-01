@@ -1,4 +1,4 @@
-import { Client, PaymentMethod, Seller } from '@prisma/client';
+import { Client, Location, PaymentMethod, Seller } from '@prisma/client';
 
 export interface ILoginProps {
 	email: string;
@@ -10,11 +10,12 @@ export default interface IRepository {
 	createClient(client: Omit<Client, 'id' | 'createdAt'>): Promise<Client>;
 	updateClient(id: string, client: Partial<Client>): Promise<Client | null>;
 	deleteClient(id: string): Promise<void>;
+	addLocationOnClient(id: string, location: Omit<Location, 'id' | 'createdAt' | 'clientId'>): Promise<Client | null>;
 	findClientById(id: string): Promise<Client | null>;
 	findAllClients(): Promise<Client[]>;
 
 	// Seller methods
-	createSeller(seller: Omit<Seller, 'id' | 'createdAt'>, paymentMethods: Omit<PaymentMethod, 'id' | 'sellerId'>[]): Promise<Seller>;
+	createSeller(seller: Omit<Seller, 'id' | 'createdAt'>): Promise<Seller>;
 	updateSeller(id: string, seller: Partial<Seller>): Promise<Seller | null>;
 	updatePaymentMethods(id: string, paymentMethods: Omit<PaymentMethod, 'id' | 'sellerId'>[]): Promise<Seller | null>;
 	deleteSeller(id: string): Promise<void>;

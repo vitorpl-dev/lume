@@ -1,4 +1,4 @@
-import { Client, PaymentMethod, Seller } from '@prisma/client';
+import { Client, Location, PaymentMethod, Seller } from '@prisma/client';
 import { createHash } from 'crypto';
 import { prisma } from '../../database/client';
 import IRepository, { ILoginProps } from '../IRepository';
@@ -11,7 +11,7 @@ export class PostgresRepository implements IRepository {
 	}
 
 	// Client Methods
-	async createClient(client: Omit<Client, 'id' | 'createdAt'>): Promise<Client> {
+	async createClient(client: Omit<Client, 'id' | 'createdAt' | 'profile'>): Promise<Client> {
 		const newClient = await prisma.client.create({
 			data: {
 				name: client.name,
@@ -43,6 +43,24 @@ export class PostgresRepository implements IRepository {
 		});
 	}
 
+	async addLocationOnClient(id: string, location: Omit<Location, 'id' | 'createdAt' | 'clientId'>): Promise<Client | null> {
+		const updatedClient = await prisma.client.update({
+			where: {
+				id,
+			},
+			data: {
+				location: {
+					create: [location],
+				},
+			},
+			include: {
+				location: true,
+			},
+		});
+
+		return updatedClient;
+	}
+
 	async findClientById(id: string): Promise<Client | null> {
 		const findedClient = await prisma.client.findFirst({
 			where: {
@@ -60,7 +78,7 @@ export class PostgresRepository implements IRepository {
 	}
 
 	// Seller Methods
-	async createSeller(seller: Omit<Seller, 'id' | 'createdAt'>, paymentMethods: Omit<PaymentMethod, 'id' | 'sellerId'>[]): Promise<Seller> {
+	async createSeller(seller: Omit<Seller, 'id' | 'createdAt'>): Promise<Seller> {
 		const newSeller = await prisma.seller.create({
 			data: {
 				name: seller.name,
@@ -68,9 +86,6 @@ export class PostgresRepository implements IRepository {
 				password: this.createMd5(seller.password),
 				cep: seller.cep,
 				profile: seller.profile,
-				paymentMethods: {
-					create: paymentMethods,
-				},
 			},
 		});
 		return newSeller;

@@ -13,6 +13,7 @@ model Client {
   email          String           @unique
   password       String
   cep            String?
+  profile        Bytes
   createdAt      DateTime         @default(now())
   clientFavorite ClientFavorite[]
   sales          Sales[]
@@ -23,7 +24,7 @@ model Client {
 
 model Location {
   id        String   @id @default(uuid())
-  name      String   @default("Home")
+  name      String
   lat       Decimal
   long      Decimal
   reference String?
@@ -41,7 +42,7 @@ model Seller {
   email          String           @unique
   password       String
   cep            String
-  profile        Bytes?
+  profile        Bytes
   createdAt      DateTime         @default(now())
   clientFavorite ClientFavorite[]
   sales          Sales[]
