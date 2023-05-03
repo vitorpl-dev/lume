@@ -1,6 +1,6 @@
 import { IBlackListProvider } from '../IBlackListProvider';
 
-export class BlackList implements IBlackListProvider {
+export class BlackListProvider implements IBlackListProvider {
 	private blacklist: string[];
 
 	constructor() {
