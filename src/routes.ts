@@ -4,6 +4,7 @@ import { authMiddleware } from './auth/middleware';
 import { addLocationClientController } from './controller/AddLocationClient';
 import { createClientController } from './controller/CreateClient';
 import { createSellerController } from './controller/CreateSeller';
+import { deleteClientController } from './controller/DeleteClient';
 
 const router = Router();
 
@@ -26,6 +27,10 @@ router.post('/seller/create', upload.single('profile'), (req: Request, res: Resp
 
 router.post('/client/location/add', authMiddleware, (req: Request, res: Response) => {
 	return addLocationClientController.handle(req, res);
+});
+
+router.delete('/client/delete', authMiddleware, (req: Request, res: Response) => {
+	return deleteClientController.handle(req, res);
 });
 
 export { router };
