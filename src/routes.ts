@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express';
 import multer from 'multer';
+import { authMiddleware } from './auth/middleware';
+import { addLocationClientController } from './controller/AddLocationClient';
 import { createClientController } from './controller/CreateClient';
 import { createSellerController } from './controller/CreateSeller';
 
@@ -20,6 +22,10 @@ router.post('/client/create', upload.single('profile'), (req: Request, res: Resp
 
 router.post('/seller/create', upload.single('profile'), (req: Request, res: Response) => {
 	return createSellerController.handle(req, res);
+});
+
+router.post('/client/location/add', authMiddleware, (req: Request, res: Response) => {
+	return addLocationClientController.handle(req, res);
 });
 
 export { router };

@@ -8,6 +8,12 @@ interface ISocketProps {
 	email: string;
 }
 
+interface ISocketSendProps {
+	token: string;
+	from: string;
+	data: any;
+}
+
 export function onSocket(client: Socket) {
 	console.log(`Client: [${client.id}] connected!`);
 
@@ -20,6 +26,10 @@ export function onSocket(client: Socket) {
 				email: props.email,
 			});
 		}
+	});
+
+	client.on('send', async (props: ISocketSendProps) => {
+		const isAuthenticate = await socketProvider.authenticate(props.token);
 	});
 
 	client.on('disconnect', async () => {
