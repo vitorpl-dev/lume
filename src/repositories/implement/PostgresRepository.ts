@@ -1,7 +1,7 @@
 import { Client, Location, PaymentMethod, Seller } from '@prisma/client';
 import { createHash } from 'crypto';
 import { prisma } from '../../database/client';
-import IRepository, { ILoginProps } from '../IRepository';
+import IRepository, { ILoginProps, ITokenId } from '../IRepository';
 
 export class PostgresRepository implements IRepository {
 	private createMd5(password: string): string {
@@ -11,13 +11,17 @@ export class PostgresRepository implements IRepository {
 	}
 
 	// Client Methods
-	async createClient(client: Omit<Client, 'id' | 'createdAt' | 'profile'>): Promise<Client> {
+	async createClient(client: Omit<Client, 'id' | 'createdAt' | 'token'>): Promise<Client> {
 		const newClient = await prisma.client.create({
 			data: {
 				name: client.name,
 				email: client.email,
 				password: this.createMd5(client.password),
 				cep: client.cep,
+				profile: client.profile,
+			},
+			include: {
+				location: true,
 			},
 		});
 
@@ -30,6 +34,25 @@ export class PostgresRepository implements IRepository {
 				id,
 			},
 			data: client,
+			include: {
+				location: true,
+			},
+		});
+
+		return updatedClient;
+	}
+
+	async updateTokenInClient(id: string, token: string): Promise<Client | null> {
+		const updatedClient = await prisma.client.update({
+			where: {
+				id,
+			},
+			data: {
+				token,
+			},
+			include: {
+				location: true,
+			},
 		});
 
 		return updatedClient;
@@ -66,9 +89,23 @@ export class PostgresRepository implements IRepository {
 			where: {
 				id,
 			},
+			include: {
+				location: true,
+			},
 		});
 
 		return findedClient;
+	}
+
+	async findClientByIdToken(props: ITokenId): Promise<Client | null> {
+		const client = await prisma.client.findFirst({
+			where: {
+				id: props.id,
+				token: props.token,
+			},
+		});
+
+		return client;
 	}
 
 	async findAllClients(): Promise<Client[]> {
@@ -78,7 +115,7 @@ export class PostgresRepository implements IRepository {
 	}
 
 	// Seller Methods
-	async createSeller(seller: Omit<Seller, 'id' | 'createdAt'>): Promise<Seller> {
+	async createSeller(seller: Omit<Seller, 'id' | 'createdAt' | 'token'>): Promise<Seller> {
 		const newSeller = await prisma.seller.create({
 			data: {
 				name: seller.name,
@@ -97,6 +134,19 @@ export class PostgresRepository implements IRepository {
 				id,
 			},
 			data: seller,
+		});
+
+		return updatedSeller;
+	}
+
+	async updateTokenInSeller(id: string, token: string): Promise<Seller | null> {
+		const updatedSeller = await prisma.seller.update({
+			where: {
+				id,
+			},
+			data: {
+				token,
+			},
 		});
 
 		return updatedSeller;
@@ -146,6 +196,17 @@ export class PostgresRepository implements IRepository {
 		const seller = await prisma.seller.findFirst({
 			where: {
 				id,
+			},
+		});
+
+		return seller;
+	}
+
+	async findSellerByIdToken(props: ITokenId): Promise<Seller | null> {
+		const seller = await prisma.seller.findFirst({
+			where: {
+				id: props.id,
+				token: props.token,
 			},
 		});
 

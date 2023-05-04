@@ -1,3 +1,4 @@
+import { generateToken } from '../../auth/jwt';
 import IRepository from '../../repositories/IRepository';
 import { ICreateClientDTO, createClientSchema } from './createClientDTO';
 
@@ -15,6 +16,10 @@ export class CreateClientUseCase {
 			profile: data.profile,
 		});
 
-		return user;
+		const token = generateToken({ id: user.id });
+
+		const updatedUser = this.repository.updateTokenInClient(user.id, token);
+
+		return updatedUser;
 	}
 }

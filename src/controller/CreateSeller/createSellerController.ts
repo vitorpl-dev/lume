@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { generateToken } from '../../auth/jwt';
 import { CreateSellerUseCase } from './createSellerUseCase';
 
 export class CreateSellerController {
@@ -23,11 +22,8 @@ export class CreateSellerController {
 				profile,
 			});
 
-			const token = generateToken({ id: seller.id });
-
 			res.status(200).json({
 				message: 'Seller created successfully',
-				token,
 				data: seller,
 			});
 		} catch (error: any) {

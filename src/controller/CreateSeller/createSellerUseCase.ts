@@ -1,3 +1,4 @@
+import { generateToken } from '../../auth/jwt';
 import IRepository from '../../repositories/IRepository';
 import { ICreateSellerDTO, createSellerSchema } from './createSellerDTO';
 
@@ -15,6 +16,10 @@ export class CreateSellerUseCase {
 			profile: data.profile,
 		});
 
-		return seller;
+		const token = generateToken({ id: seller.id });
+
+		const updatedSeller = this.repository.updateTokenInClient(seller.id, token);
+
+		return updatedSeller;
 	}
 }

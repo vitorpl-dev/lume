@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { generateToken } from '../../auth/jwt';
 import { CreateClientUseCase } from './createClientUseCase';
 
 export class CreateClientController {
@@ -23,11 +22,8 @@ export class CreateClientController {
 				profile,
 			});
 
-			const token = generateToken({ id: user.id });
-
 			res.status(201).json({
 				message: 'User created successfully',
-				token,
 				data: user,
 			});
 		} catch (error: any) {

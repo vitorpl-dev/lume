@@ -8,13 +8,15 @@ datasource db {
 }
 
 model Client {
-  id             String           @id @default(uuid())
-  name           String
-  email          String           @unique
-  password       String
-  cep            String?
-  profile        Bytes
-  createdAt      DateTime         @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  cep       String
+  profile   Bytes
+  token     String?
+  createdAt DateTime @default(now())
+
   clientFavorite ClientFavorite[]
   sales          Sales[]
   location       Location[]
@@ -37,13 +39,15 @@ model Location {
 }
 
 model Seller {
-  id             String           @id @default(uuid())
-  name           String
-  email          String           @unique
-  password       String
-  cep            String
-  profile        Bytes
-  createdAt      DateTime         @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  cep       String
+  profile   Bytes
+  token     String?
+  createdAt DateTime @default(now())
+
   clientFavorite ClientFavorite[]
   sales          Sales[]
   paymentMethods PaymentMethod[]
